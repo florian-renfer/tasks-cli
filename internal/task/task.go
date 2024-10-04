@@ -1,15 +1,26 @@
 package task
 
-// Task structure
+import (
+	"time"
+)
+
 type Task struct {
-	Label string
-	Id    int
+	Id        int
+	Label     string
+	CreatedAt time.Time
+	DoneAt    time.Time
 }
 
-// Create a new task with the given label
-func Create(label string) (t *Task) {
+func CreateTask(label string) (t *Task) {
 	t = &Task{
-		Label: label,
+		Id:        1,
+		Label:     label,
+		CreatedAt: time.Now(),
 	}
 	return
+}
+
+func (t *Task) MarkAsDone() time.Time {
+	t.DoneAt = time.Now()
+	return t.DoneAt
 }

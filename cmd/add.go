@@ -21,7 +21,6 @@ var addCmd = &cobra.Command{
 	ValidArgs: []string{"label"},
 	Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
-		s := task.GetCsvTaskServiceInstance()
-		s.Create(label)
+		task.CreateTask(label)
 	},
 }

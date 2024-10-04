@@ -1,54 +1,44 @@
 package project
 
 import (
-	"encoding/csv"
-	"fmt"
-	"log"
-	"os"
-	"strconv"
+	"time"
 
 	"github.com/florian-renfer/tasks/internal/task"
 )
 
-// Project structure
 type Project struct {
-	Name  string
-	Tasks []task.Task
+	Id          int
+	Label       string
+	SubProjects []*Project
+	Tasks       []*task.Task
+	CreatedAt   time.Time
 }
 
-// Create a new project with the given name
-func Create(name string) (p *Project) {
+func CreateProject(label string) (p *Project) {
 	p = &Project{
-		Name: name,
+		Id:          1,
+		Label:       label,
+		SubProjects: make([]*Project, 0),
+		Tasks:       make([]*task.Task, 0),
+		CreatedAt:   time.Now(),
 	}
 	return
 }
 
-// Add the given task to the current project
-func (p *Project) AddTask(task *task.Task) (t *task.Task, err error) {
-
-	// Validate task and project, e.g. task has to be unique for the given project, e.g. ignore case when comparing task labels
-	f, err := os.OpenFile("../../tasks-cli.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-
-	if err != nil {
-		log.Fatalf("Failed to create file.\n%v\n", err)
+func (p *Project) AddSubProject(label string) (c *Project) {
+	c = &Project{
+		Id:          1,
+		Label:       label,
+		SubProjects: make([]*Project, 0),
+		Tasks:       make([]*task.Task, 0),
+		CreatedAt:   time.Now(),
 	}
+	p.SubProjects = append(p.SubProjects, c)
+	return
+}
 
-	// Close .csv file right before exiting the function
-	defer f.Close()
-
-	w := csv.NewWriter(f)
-	r := []string{strconv.Itoa(task.Id), task.Label}
-
-	err = w.Write(r)
-	if err != nil {
-		log.Fatalf("Error writing to file.\n%v\n", err)
-	}
-
-	w.Flush()
-
-	fmt.Printf("Task '%v' added to project '%v'.", task.Label, p.Name)
-
-	t = task
-	return t, nil
+func (p *Project) AddTask(label string) (t *task.Task) {
+	t = task.CreateTask(label)
+	p.Tasks = append(p.Tasks, t)
+	return
 }
